@@ -4,6 +4,7 @@ from catboost import CatBoostClassifier
 from synthgauge.metrics.propensity import propensity_metrics, specks
 from sdv.evaluation.single_table import evaluate_quality as evaluate_quality_sdv
 from io import StringIO 
+import re
 
 
 
@@ -305,6 +306,7 @@ class DataQualityEvaluator:
     def save_plot_to_html(self, html_file_path):
         """
         Saves the current figure to an SVG and writes it to an HTML file.
+        Ensures the SVG is responsive for Kubeflow Pipelines Visualization tab.
         """
         if self.fig is None:
             raise ValueError("No figure available. Generate a plot first.")
@@ -315,7 +317,23 @@ class DataQualityEvaluator:
         svg_content = svg_buffer.getvalue()
         svg_buffer.close()
 
-        # Write the SVG content to an HTML file
+        # Remove width and height attributes from the <svg> tag
+        svg_content = re.sub(r'(<svg[^>]*)(\swidth="[^"]*")', r'\1', svg_content)
+        svg_content = re.sub(r'(<svg[^>]*)(\sheight="[^"]*")', r'\1', svg_content)
+
+        # Ensure viewBox is present; if not, add a default one (adjust as needed)
+        if 'viewBox' not in svg_content:
+            width_match = re.search(r'width="([\d\.]+)(\w*)"', svg_content)
+            height_match = re.search(r'height="([\d\.]+)(\w*)"', svg_content)
+            if width_match and height_match:
+                width = width_match.group(1)
+                height = height_match.group(1)
+                viewbox_str = f' viewBox="0 0 {width} {height}"'
+            else:
+                viewbox_str = ' viewBox="0 0 800 600"'
+            svg_content = re.sub(r'(<svg[^>]*)', r'\1' + viewbox_str, svg_content, count=1)
+
+        # Write the SVG content to an HTML file with responsive style
         html_content = f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -323,10 +341,33 @@ class DataQualityEvaluator:
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Utility Report</title>
+            <style>
+                html, body {{
+                    width: 100%;
+                    height: 100%;
+                    margin: 0;
+                    padding: 0;
+                    overflow: hidden;
+                }}
+                #container {{
+                    width: 100vw;
+                    height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: stretch;
+                    justify-content: start;
+                }}
+                svg {{
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                }}
+            </style>
         </head>
         <body>
-            <h1>Utility Report</h1>
-            {svg_content}
+            <div id="container">
+                {svg_content}
+            </div>
         </body>
         </html>
         """

@@ -284,7 +284,7 @@ class PrivacyRiskEvaluator:
         # Annotate scores and interpretations
         for i, (bar, score, metric) in enumerate(zip(bars, scores, metric_names)):
             ax.text(score + 0.02, i, f'{score:.2f}', va='center', ha='left', fontsize=10, weight='bold')
-            ax.text(score + 0.15, i, interpretations[metric], va='center', ha='left', fontsize=10, color='dimgray')
+            ax.text(score + 0.08, i, interpretations[metric], va='center', ha='left', fontsize=10, color='dimgray')
 
         plt.tight_layout()
         plt.subplots_adjust(left=0.35, right=0.95)
@@ -351,7 +351,6 @@ class PrivacyRiskEvaluator:
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Privacy Report</title>
             <style>
                 html, body {{
                     width: 100%;
@@ -366,7 +365,7 @@ class PrivacyRiskEvaluator:
                     display: flex;
                     flex-direction: column;
                     align-items: stretch;
-                    justify-content: stretch;
+                    justify-content: start;
                 }}
                 svg {{
                     width: 100%;
@@ -377,7 +376,6 @@ class PrivacyRiskEvaluator:
         </head>
         <body>
             <div id="container">
-                <h1>Privacy Report</h1>
                 {svg_content}
             </div>
         </body>
