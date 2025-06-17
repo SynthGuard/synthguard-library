@@ -275,7 +275,7 @@ class PrivacyRiskEvaluator:
             fontsize=14,
             pad=20
         )
-        ax.set_xlim(0, 1.2)  # Extend x-axis to allow room for text
+        ax.set_xlim(0, 1.3)  # Extend x-axis to allow room for text
         ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])  # Keep axis ticks capped at 1.0
         ax.set_yticks(y_positions)
         ax.set_yticklabels(metric_names, fontsize=11)
@@ -284,12 +284,12 @@ class PrivacyRiskEvaluator:
 
         # Annotate scores and interpretations with dynamic positioning and color
         for i, (bar, score, metric) in enumerate(zip(bars, scores, metric_names)):
-            if score > 0.85:
-                ax.text(score - 0.02, i, f'{score:.2f}', va='center', ha='right', fontsize=10, weight='bold', color='white')
-                ax.text(score - 0.08, i, interpretations[metric], va='center', ha='right', fontsize=10, color='white')
+            if score > 0.79:
+                ax.text(score - 0.02, i, f'{score:.2f}', va='center', ha='right', fontsize=12, weight='bold', color='white')
+                ax.text(score - 0.08, i, interpretations[metric], va='center', ha='right', fontsize=9, color='white')
             else:
-                ax.text(score + 0.02, i, f'{score:.2f}', va='center', ha='left', fontsize=10, weight='bold')
-                ax.text(score + 0.08, i, interpretations[metric], va='center', ha='left', fontsize=10, color='dimgray')
+                ax.text(score + 0.02, i, f'{score:.2f}', va='center', ha='left', fontsize=12, weight='bold')
+                ax.text(score + 0.08, i, interpretations[metric], va='center', ha='left', fontsize=9, color='dimgray')
 
         plt.tight_layout()
         plt.subplots_adjust(left=0.35, right=0.95)

@@ -233,7 +233,7 @@ class DataQualityEvaluator:
             return 
 
         ax.bar(labels, sizes, color=colors[:len(labels)])
-        ax.set_title('Statistical Similarity Metrics')
+        ax.set_title('Statistical Similarity Metrics', fontsize=16)
         ax.set_ylim(0, 1)  # Set y-axis limits to 0-1
 
         # Add values above each bar
@@ -254,7 +254,7 @@ class DataQualityEvaluator:
         prop_values = [observed, standard, ratio]
 
         ax.bar(prop_labels, prop_values, color='skyblue')
-        ax.set_title('Propensity Metrics')
+        ax.set_title('Propensity Metrics', fontsize=16)
         ax.set_ylabel('Value')
 
         # Add values above each bar
@@ -270,7 +270,7 @@ class DataQualityEvaluator:
             ks_distance (float): The KS distance (SPECKS) value.
         """
         ax.bar(['SPECKS (KS distance)'], [ks_distance], color='purple')
-        ax.set_title('SPECKS Metric (KS Distance)')
+        ax.set_title('SPECKS Metric (KS Distance)', fontsize=16)
         ax.set_ylim(0, 1)  # Set y-axis limits to 0-1
 
         # Add value above the bar
