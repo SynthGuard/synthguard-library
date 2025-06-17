@@ -317,22 +317,6 @@ class DataQualityEvaluator:
         svg_content = svg_buffer.getvalue()
         svg_buffer.close()
 
-        # Remove width and height attributes from the <svg> tag
-        svg_content = re.sub(r'(<svg[^>]*)(\swidth="[^"]*")', r'\1', svg_content)
-        svg_content = re.sub(r'(<svg[^>]*)(\sheight="[^"]*")', r'\1', svg_content)
-
-        # Ensure viewBox is present; if not, add a default one (adjust as needed)
-        if 'viewBox' not in svg_content:
-            width_match = re.search(r'width="([\d\.]+)(\w*)"', svg_content)
-            height_match = re.search(r'height="([\d\.]+)(\w*)"', svg_content)
-            if width_match and height_match:
-                width = width_match.group(1)
-                height = height_match.group(1)
-                viewbox_str = f' viewBox="0 0 {width} {height}"'
-            else:
-                viewbox_str = ' viewBox="0 0 800 600"'
-            svg_content = re.sub(r'(<svg[^>]*)', r'\1' + viewbox_str, svg_content, count=1)
-
         # Write the SVG content to an HTML file with responsive style
         html_content = f"""
         <!DOCTYPE html>
@@ -340,7 +324,6 @@ class DataQualityEvaluator:
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Utility Report</title>
             <style>
                 html, body {{
                     width: 100%;

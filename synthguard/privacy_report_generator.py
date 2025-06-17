@@ -275,21 +275,25 @@ class PrivacyRiskEvaluator:
             fontsize=14,
             pad=20
         )
-        ax.set_xlim(0, 1)
+        ax.set_xlim(0, 1.2)  # Extend x-axis to allow room for text
+        ax.set_xticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])  # Keep axis ticks capped at 1.0
         ax.set_yticks(y_positions)
         ax.set_yticklabels(metric_names, fontsize=11)
         ax.invert_yaxis()
         ax.grid(axis='x', linestyle='--', alpha=0.6)
 
-        # Annotate scores and interpretations
+        # Annotate scores and interpretations with dynamic positioning and color
         for i, (bar, score, metric) in enumerate(zip(bars, scores, metric_names)):
-            ax.text(score + 0.02, i, f'{score:.2f}', va='center', ha='left', fontsize=10, weight='bold')
-            ax.text(score + 0.08, i, interpretations[metric], va='center', ha='left', fontsize=10, color='dimgray')
+            if score > 0.85:
+                ax.text(score - 0.02, i, f'{score:.2f}', va='center', ha='right', fontsize=10, weight='bold', color='white')
+                ax.text(score - 0.08, i, interpretations[metric], va='center', ha='right', fontsize=10, color='white')
+            else:
+                ax.text(score + 0.02, i, f'{score:.2f}', va='center', ha='left', fontsize=10, weight='bold')
+                ax.text(score + 0.08, i, interpretations[metric], va='center', ha='left', fontsize=10, color='dimgray')
 
         plt.tight_layout()
         plt.subplots_adjust(left=0.35, right=0.95)
 
-        # Save if output path provided
         if output_path:
             plt.savefig(os.path.join(output_path, 'privacy_report.pdf'), bbox_inches='tight')
             plt.savefig(os.path.join(output_path, 'privacy_report.svg'), bbox_inches='tight')
@@ -299,6 +303,7 @@ class PrivacyRiskEvaluator:
 
         plt.show()
         self.fig = fig
+
 
     def run_privacy_realistic(self):
         """
@@ -325,25 +330,7 @@ class PrivacyRiskEvaluator:
         self.fig.savefig(svg_buffer, format='svg')
         svg_content = svg_buffer.getvalue()
         svg_buffer.close()
-
-        # Remove width and height attributes from the <svg> tag
-        svg_content = re.sub(r'(<svg[^>]*)(\swidth="[^"]*")', r'\1', svg_content)
-        svg_content = re.sub(r'(<svg[^>]*)(\sheight="[^"]*")', r'\1', svg_content)
-
-        # Ensure viewBox is present; if not, add a default one (adjust as needed)
-        if 'viewBox' not in svg_content:
-            # Try to extract width and height from the original SVG (if present)
-            width_match = re.search(r'width="([\d\.]+)(\w*)"', svg_content)
-            height_match = re.search(r'height="([\d\.]+)(\w*)"', svg_content)
-            if width_match and height_match:
-                width = width_match.group(1)
-                height = height_match.group(1)
-                viewbox_str = f' viewBox="0 0 {width} {height}"'
-            else:
-                # Fallback to a generic viewBox
-                viewbox_str = ' viewBox="0 0 800 600"'
-            svg_content = re.sub(r'(<svg[^>]*)', r'\1' + viewbox_str, svg_content, count=1)
-
+        
         # Write the SVG content to an HTML file with responsive style
         html_content = f"""
         <!DOCTYPE html>
