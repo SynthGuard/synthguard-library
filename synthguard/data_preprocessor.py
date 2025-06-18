@@ -40,7 +40,7 @@ class DataPreprocessor:
     def replace_invalid_values(self):
         """Replace invalid values ('-', 'n.d.') with pd.NA."""
         if self.check_real_data_availability():
-            self.data.replace(['-', 'n.d.'], pd.NA, inplace=True)
+            self.data.replace(['-', 'n.d.', 'None'], pd.NA, inplace=True)
             
     def drop_na_columns(self, columns_to_drop):
         """Drop rows with missing values in specific columns."""

@@ -284,11 +284,10 @@ class PrivacyRiskEvaluator:
 
         # Annotate scores and interpretations with dynamic positioning and color
         for i, (bar, score, metric) in enumerate(zip(bars, scores, metric_names)):
+            ax.text(score + 0.02, i, f'{score:.2f}', va='center', ha='left', fontsize=10, weight='bold')
             if score > 0.79:
-                ax.text(score - 0.02, i, f'{score:.2f}', va='center', ha='right', fontsize=10, weight='bold', color='white')
                 ax.text(score - 0.01, i, interpretations[metric], va='center', ha='right', fontsize=9, color='white')
             else:
-                ax.text(score + 0.02, i, f'{score:.2f}', va='center', ha='left', fontsize=10, weight='bold')
                 ax.text(score + 0.1, i, interpretations[metric], va='center', ha='left', fontsize=9, color='dimgray')
 
         plt.tight_layout()
